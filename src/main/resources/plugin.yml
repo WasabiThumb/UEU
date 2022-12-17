@@ -3,7 +3,8 @@ version: 3.2
 api-version: 1.13
 description: Infinite Elytra, yay!
 author: TheFrieber_
-main: plugin.Main
+main: com.github.thefrieber.ueu.Main
+softdepend: [ ElytraBHop ]
 
 commands:
      unlimitedelytra:

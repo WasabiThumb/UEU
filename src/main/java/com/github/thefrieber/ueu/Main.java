@@ -1,6 +1,8 @@
-package plugin;
+package com.github.thefrieber.ueu;
 
 import java.io.File;
+import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -8,11 +10,15 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityEvent;
+import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
@@ -76,9 +82,29 @@ public class Main extends JavaPlugin implements Listener
 		public static double Fuel_Usage_Vaule;
 	}
 
+	private <T extends Cancellable> boolean cancelIfBhopping(Entity e) {
+		if (e instanceof Player) {
+			List<Player> bhopping = BHopIntegration.getPlayerList();
+			if (bhopping.size() < 1) return false;
+			Player ply = (Player) e;
+			UUID uuid = ply.getUniqueId();
+			return bhopping.stream().anyMatch((Player p) -> p.getUniqueId().equals(uuid));
+		}
+		return false;
+	}
+
+	private <T extends EntityEvent> boolean cancelIfBhopping(T event) {
+		return cancelIfBhopping(event.getEntity());
+	}
+
+	private <T extends PlayerEvent> boolean cancelIfBhopping(T event) {
+		return cancelIfBhopping(event.getPlayer());
+	}
+
 	@EventHandler
 	public void onDamage(EntityDamageEvent event)
 	{
+		if (cancelIfBhopping(event)) return;
 		try
 		{
 			if (event.getEntity() instanceof Player)
@@ -251,6 +277,7 @@ public class Main extends JavaPlugin implements Listener
 	@EventHandler
 	public void onMove(PlayerMoveEvent e)
 	{
+		if (cancelIfBhopping(e)) return;
 		if (!this.getConfig().getBoolean("TheFriebers_options.Use_Fuel_Coal"))
 		{
 			Player p = e.getPlayer();
@@ -659,6 +686,7 @@ public class Main extends JavaPlugin implements Listener
 	@EventHandler
 	public void onItemDamage(PlayerItemDamageEvent e)
 	{
+		if (cancelIfBhopping(e)) return;
 		if (this.getConfig().getBoolean("TheFriebers_options.Unbreakable_wing"))
 		{
 			if (e.getItem().getType() == Material.ELYTRA && e.getPlayer().isGliding()

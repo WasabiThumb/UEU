@@ -1,5 +1,18 @@
 # UEU
-Unlimited Elytra Upgraded Source Code
+**Unlimited Elytra Upgraded**
+
+Fork by Wasabi
+- Fixed namespace
+  - Namespace is now ``com.github.thefrieber`` as per common convention, rather than ``plugin``
+  - Removed references to old build environment
+- Added Maven build file
+  - Build with ``mvn clean package``
+- Updated to Java 11, targets Minecraft 1.19.X
+  - Versions that worked before should still work
+- Added compatibility with Elytra BHop
+- No major code changes have been made, it's still not the best to work with ;)
+
+## Original README
 
 WARNING: This is not beginner friendly, if you search for a Soruce Code to look at, i wouldn't 
 recommend this at all, get cleaner code, that has better readable code, something that has comments.
